@@ -1,4 +1,5 @@
 import { getAccessToken } from "@/actions/auth"
+import fetchToCurl from "fetch-to-curl"
 
 type BasicDataObject = {
     [key: string]: string | number | boolean | string[] | number[] | boolean[]
@@ -7,22 +8,22 @@ type BasicDataObject = {
 interface InstanceRequest {
     GET: (
         url: string,
-        params: BasicDataObject,
-        headers: Headers
+        params?: BasicDataObject,
+        headers?: Headers
     ) => Promise<Response>
 
-    POST: (url: string, params: object, headers: Headers) => Promise<Response>
+    POST: (url: string, body: object, headers?: Headers) => Promise<Response>
 
-    PUT: (url: string, params: object, headers: Headers) => Promise<Response>
+    PUT: (url: string, body: object, headers?: Headers) => Promise<Response>
 
-    DELETE: (url: string, params: object, headers: Headers) => Promise<Response>
+    DELETE: (url: string, body: object, headers: Headers) => Promise<Response>
 }
 
 export default function getInstanceRequest(baseUrl: string): InstanceRequest {
     async function GET(
         url: string,
         params: BasicDataObject = {},
-        headers: Headers
+        headers: Headers = new Headers()
     ): Promise<Response> {
         headers.set("Authorization", `Bearer ${await getAccessToken()}`)
 
@@ -31,30 +32,33 @@ export default function getInstanceRequest(baseUrl: string): InstanceRequest {
         Object.keys(params).forEach((key: string) => {
             if (Array.isArray(params[key])) {
                 params[key].forEach((param) =>
-                    urlInstance.searchParams.append(`${key}`, param.toString())
+                    urlInstance.searchParams.append(
+                        `${key}[]`,
+                        param.toString()
+                    )
                 )
             } else {
                 urlInstance.searchParams.append(key, params[key].toString())
             }
         })
 
-        return fetch(urlInstance, { headers: headers })
+        return fetch(urlInstance, { headers: headers, next: { tags: [url] } })
     }
 
     async function POST(
         url: string,
         body: object,
-        headers: Headers
+        headers: Headers = new Headers()
     ): Promise<Response> {
         headers.set("Authorization", `Bearer ${await getAccessToken()}`)
 
-        if (!headers.has("Content-Type")) {
+        if (headers.has("Content-Type")) {
             headers.set("Content-Type", "application/json")
         }
 
         return fetch(`${baseUrl}/${url}`, {
             method: "POST",
-            body: JSON.stringify(body),
+            body: body instanceof FormData ? body : JSON.stringify(body),
             headers: headers,
         })
     }
@@ -62,7 +66,7 @@ export default function getInstanceRequest(baseUrl: string): InstanceRequest {
     async function PUT(
         url: string,
         body: object,
-        headers: Headers
+        headers: Headers = new Headers()
     ): Promise<Response> {
         headers.set("Authorization", `Bearer ${await getAccessToken()}`)
 

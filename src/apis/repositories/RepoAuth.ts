@@ -24,6 +24,7 @@ const refresh = (refreshToken: string): Promise<Response> => {
     return fetch(`${HOST}/auth/refresh`, {
         method: "POST",
         body: JSON.stringify({ refresh_token: refreshToken }),
+        headers: { "Content-Type": "application/json" },
     })
 }
 

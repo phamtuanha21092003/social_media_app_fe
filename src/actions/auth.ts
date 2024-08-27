@@ -2,14 +2,14 @@
 
 import { cookies } from "next/headers"
 import { ApiAuth } from "@/apis/repositories"
+import { redirect } from "next/navigation"
 
-async function handleRefresh() {
+export async function handleRefresh() {
     const refreshToken = await getRefreshToken()
 
     if (!refreshToken) {
         resetAuthCookies()
-        window.location.href = "/"
-        return
+        redirect("/")
     }
 
     try {
@@ -19,21 +19,21 @@ async function handleRefresh() {
             const { access_token: accessToken, refresh_token: refreshToken } =
                 await res.json()
 
-            cookies().set("accessToken", accessToken)
-            cookies().set("refreshToken", refreshToken)
+            setAccessToken(accessToken)
+            setRefreshToken(refreshToken)
 
             return accessToken
         }
 
         resetAuthCookies()
 
-        window.location.href = "/"
+        redirect("/")
     } catch (err) {
         console.log(err)
 
         resetAuthCookies()
 
-        window.location.href = "/"
+        redirect("/")
     }
 }
 
@@ -48,8 +48,8 @@ export async function actionLogin(email: string, password: string) {
         const { access_token: accessToken, refresh_token: refreshToken } =
             await res.json()
 
-        cookies().set("accessToken", accessToken)
-        cookies().set("refreshToken", refreshToken)
+        setAccessToken(accessToken)
+        setRefreshToken(refreshToken)
     } catch (err) {
         return {
             err: err instanceof Error ? err.message : "An error occurred",
@@ -58,9 +58,21 @@ export async function actionLogin(email: string, password: string) {
 }
 
 export async function resetAuthCookies() {
-    cookies().set("userId", "")
-    cookies().set("accessToken", "")
-    cookies().set("refreshToken", "")
+    cookies().delete("accessToken")
+    cookies().delete("refreshToken")
+    cookies().delete("userId")
+}
+
+export async function setAccessToken(accessToken: string) {
+    cookies().set("accessToken", accessToken, { maxAge: 60 * 60 })
+}
+
+export async function setRefreshToken(refreshToken: string) {
+    cookies().set("refreshToken", refreshToken, { maxAge: 60 * 60 * 24 * 30 })
+}
+
+function setUserId(userId: string) {
+    cookies().set("userId", userId, { maxAge: 60 * 60 * 24 * 30 })
 }
 
 export async function getUserId() {

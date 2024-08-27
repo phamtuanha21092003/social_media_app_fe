@@ -3,13 +3,19 @@ import type { PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "@/stores"
 
 interface MeState {
+    id: number
     email: string
     name: string
+    avatar: string
+    isLoading: boolean
 }
 
 const initialState: MeState = {
+    id: 0,
     email: "",
     name: "",
+    avatar: "",
+    isLoading: false,
 }
 
 export const meSlice = createSlice({

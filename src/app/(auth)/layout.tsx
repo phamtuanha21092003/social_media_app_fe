@@ -1,7 +1,7 @@
 import Link from "next/link"
 import React from "react"
 
-const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
+const LayoutAuth: React.FC<PropsChildren> = async ({ children }) => {
     return (
         <>
             <header className="px-8 py-6 bg-white flex items-center justify-center">
