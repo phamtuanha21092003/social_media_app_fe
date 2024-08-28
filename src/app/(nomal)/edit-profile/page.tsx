@@ -1,8 +1,8 @@
 "use client"
 
 import React from "react"
-import { useSelector } from "react-redux"
-import { selectMe } from "@/stores/me/slice"
+import { useDispatch, useSelector } from "react-redux"
+import { selectMe, updateProfile } from "@/stores/me/slice"
 import { Input, Button, InputRef, message } from "antd"
 import Image from "next/image"
 import { upload } from "@/actions/common"
@@ -20,6 +20,8 @@ const EditProfile: React.FC = () => {
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
     const refName = React.useRef<InputRef>(null)
+
+    const dispatch = useDispatch()
 
     async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
         if (e.target.files) {
@@ -57,6 +59,7 @@ const EditProfile: React.FC = () => {
 
             if (mess === "Updated successfully") {
                 setIsEditProfile(false)
+                dispatch(updateProfile({ name, avatar }))
                 message.success("Updated successfully")
             }
 

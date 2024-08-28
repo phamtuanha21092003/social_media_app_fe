@@ -17,7 +17,7 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/feed"],
+    matcher: ["/feed", "/edit-profile"],
 }
 
 function getUrlLogin(req: NextRequest): NextURL {

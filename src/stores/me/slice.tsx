@@ -25,10 +25,16 @@ export const meSlice = createSlice({
         initMe(state, action: PayloadAction<MeState>) {
             return { ...action.payload }
         },
+        updateProfile(
+            state,
+            action: PayloadAction<{ name: string; avatar: string }>
+        ) {
+            return { ...state, ...action.payload }
+        },
     },
 })
 
-export const { initMe } = meSlice.actions
+export const { initMe, updateProfile } = meSlice.actions
 
 export const selectMe = (state: RootState) => state.me
 
