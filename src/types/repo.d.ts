@@ -1,3 +1,3 @@
 interface RepoInstance {
-    [key: string]: (...args: any[]) => Promise<Response>
+    [key: string]: (...args: any[]) => Promise<Response> | object
 }

@@ -8,15 +8,18 @@ import {
     HomeOutlined,
     MessageOutlined,
     SearchOutlined,
+    TeamOutlined,
 } from "@ant-design/icons"
 import { Avatar, Dropdown, MenuProps } from "antd"
 import Image from "next/image"
 import { getMe } from "@/actions/profile"
 import { useDispatch, useSelector } from "react-redux"
 import { initMe, selectMe } from "@/stores/me/slice"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 
 const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
+    const pathname = usePathname()
+
     const dispatch = useDispatch()
 
     const me = useSelector(selectMe)
@@ -64,14 +67,17 @@ const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
 
     return (
         <>
-            <header className="flex items-center justify-center px-8 py-4 bg-white fixed w-full">
-                <div className="max-w-[1200px] flex justify-between items-center w-full">
+            <header className="flex items-center justify-center px-8 py-4 bg-white fixed w-full z-50">
+                <div className="max-w-[1400px] flex justify-between items-center w-full">
                     <Link href={"/feed"}>
                         <p>Ha</p>
                     </Link>
                     <div className="flex items-center gap-8">
                         <Link href="/feed">
                             <HomeOutlined style={{ fontSize: "28px" }} />
+                        </Link>
+                        <Link href="friends">
+                            <TeamOutlined style={{ fontSize: "28px" }} />
                         </Link>
                         <Link href="/message">
                             <MessageOutlined style={{ fontSize: "28px" }} />
@@ -111,7 +117,11 @@ const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
             <div className="h-16"></div>
 
             <main className="flex items-center justify-center">
-                <div className="max-w-[1200px] w-full">{children}</div>
+                {pathname.includes("/friends") ? (
+                    <div className="w-full">{children}</div>
+                ) : (
+                    <div className="max-w-[1400px] w-full">{children}</div>
+                )}
             </main>
         </>
     )

@@ -8,6 +8,20 @@ const updateMe = (data: { name: string; avatar: string }) => {
     return Client.PUT("/me", data)
 }
 
-const RepoProfile = { getMe, updateMe }
+const getFriendSuggestions = ({
+    page,
+    perPage,
+}: {
+    page?: number
+    perPage?: number
+}) => {
+    return Client.GET("/friend_suggestions", { page: page, per_page: perPage })
+}
+
+const addFriend = (targeID: number) => {
+    return Client.POST(`/friend/${targeID}`)
+}
+
+const RepoProfile = { getMe, updateMe, getFriendSuggestions, addFriend }
 
 export default RepoProfile

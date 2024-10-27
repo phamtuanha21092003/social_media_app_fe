@@ -1,11 +1,16 @@
 "use client"
 
-import * as React from "react"
+import React from "react"
 import { Provider } from "react-redux"
 import { store } from "@/stores"
+import { AntdRegistry } from "@ant-design/nextjs-registry"
 
 const Config = ({ children }: { children: React.ReactNode }) => {
-    return <Provider store={store}>{children}</Provider>
+    return (
+        <AntdRegistry>
+            <Provider store={store}>{children}</Provider>
+        </AntdRegistry>
+    )
 }
 
 export default Config

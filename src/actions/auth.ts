@@ -45,11 +45,15 @@ export async function actionLogin(email: string, password: string) {
             throw Error("Email, password is invalid")
         }
 
-        const { access_token: accessToken, refresh_token: refreshToken } =
-            await res.json()
+        const {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            user_id: userId,
+        } = await res.json()
 
         setAccessToken(accessToken)
         setRefreshToken(refreshToken)
+        setUserId(userId)
     } catch (err) {
         return {
             err: err instanceof Error ? err.message : "An error occurred",
