@@ -18,6 +18,7 @@ const toEntityPost = (post: any) => ({
     avatar: post.avatar,
     url: post.url,
     commentCount: post.comment_count,
+    name: post.name,
     // TODO: remove || 0 next line
     likeCount: post.like_count || 0,
     created: post.created,

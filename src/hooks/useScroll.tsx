@@ -15,7 +15,6 @@ const useScroll = ({
                 window.innerHeight + window.scrollY >=
                 document.body.offsetHeight
             ) {
-                console.log("end")
                 if (total > quantity) {
                     setPage((prevPage: number) => prevPage + 1)
                 }

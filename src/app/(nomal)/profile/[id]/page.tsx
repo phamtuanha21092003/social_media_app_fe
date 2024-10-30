@@ -42,8 +42,6 @@ const Profile = ({ params }: { params: { id: number } }) => {
 
     useScroll({ total, setPage, quantity: posts.length })
 
-    console.log(me.id == id, me.id, id)
-
     return (
         <div className="flex flex-col gap-4">
             {me.id == id && (

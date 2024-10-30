@@ -32,8 +32,6 @@ const Feed: React.FC = () => {
     const [page, setPage] = React.useState<number>(1),
         perPage = 10
 
-    console.log(page, "page")
-
     const [total, setTotal] = React.useState<number>(0)
 
     const [friendSuggestions, setFriendSuggestions] = React.useState<User[]>([])

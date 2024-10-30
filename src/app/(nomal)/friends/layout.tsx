@@ -9,8 +9,6 @@ const LayoutFriend = ({ children }: { children: React.ReactNode }) => {
 
     const fetchDataMenu = React.useCallback(() => {}, [pathname])
 
-    console.log(pathname, "path")
-
     return (
         <>
             <div className="fixed top-0"></div> {children}

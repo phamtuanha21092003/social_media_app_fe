@@ -14,10 +14,20 @@ export async function middleware(req: NextRequest) {
             return NextResponse.redirect(getUrlLogin(req))
         }
     }
+
+    const requestHeaders = new Headers(req.headers)
+
+    requestHeaders.set("x-pathname", req.nextUrl.pathname)
+
+    return NextResponse.next({
+        request: {
+            headers: requestHeaders,
+        },
+    })
 }
 
 export const config = {
-    matcher: ["/feed", "/edit-profile"],
+    matcher: ["/feed", "/edit-profile", "/profile/:path*"],
 }
 
 function getUrlLogin(req: NextRequest): NextURL {

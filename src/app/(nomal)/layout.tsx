@@ -76,9 +76,9 @@ const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
                         <Link href="/feed">
                             <HomeOutlined style={{ fontSize: "28px" }} />
                         </Link>
-                        <Link href="friends">
+                        {/* <Link href="/friends">
                             <TeamOutlined style={{ fontSize: "28px" }} />
-                        </Link>
+                        </Link> */}
                         <Link href="/message">
                             <MessageOutlined style={{ fontSize: "28px" }} />
                         </Link>
@@ -117,11 +117,11 @@ const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
             <div className="h-16"></div>
 
             <main className="flex items-center justify-center">
-                {pathname.includes("/friends") ? (
+                {/* {pathname.includes("/friends") ? (
                     <div className="w-full">{children}</div>
-                ) : (
-                    <div className="max-w-[1400px] w-full">{children}</div>
-                )}
+                ) : ( */}
+                <div className="max-w-[1400px] w-full">{children}</div>
+                {/* )} */}
             </main>
         </>
     )

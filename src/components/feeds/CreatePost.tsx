@@ -12,7 +12,6 @@ function CreatePost(props: {
     setPost: React.Dispatch<React.SetStateAction<Post>>
     setPosts: React.Dispatch<React.SetStateAction<any>>
 }) {
-    console.log("create")
     const { post, setPost, setPosts } = props
 
     const refInputFile = React.useRef<HTMLInputElement>(null)

@@ -2,10 +2,12 @@ import React from "react"
 import { getUserId } from "@/actions/auth"
 import Image from "next/image"
 import Info from "@/components/profiles/Info"
-import Client from "@/apis/client/ClientProfile"
+import ClientProfile from "@/apis/client/ClientProfile"
 import Link from "next/link"
+import FriendshipSideBar from "@/components/profiles/FriendshipSideBar"
+import { getPathNameServerComponent } from "@/utils/headers"
 
-const layout = async ({
+const ProfileLayout = async ({
     children,
     params,
 }: {
@@ -16,11 +18,11 @@ const layout = async ({
 
     const { id } = params
 
-    const { data: profile } = await Client.GET(`/${id}`).then((res) =>
+    const { data: profile } = await ClientProfile.GET(`/${id}`).then((res) =>
         res.json()
     )
 
-    const { total: totalFriends, data: friends } = await Client.GET(
+    const { total: totalFriends, data: friends } = await ClientProfile.GET(
         "/friends",
         {
             per_page: 9,
@@ -31,18 +33,18 @@ const layout = async ({
         <div className="grid grid-cols-4 mt-4 gap-4">
             <div>
                 <Info profile={userId === id ? undefined : profile} />
-                {userId && userId === id && (
+                {userId && userId === id && friends.length > 0 && (
                     <div className="bg-white p-4 rounded-lg relative mt-8">
                         <div className="flex justify-between items-center">
                             <div className="font-bold text-lg">Friend</div>
-                            <Link href={`${userId}/friends`}>
+                            <Link href={`/profile/${userId}/friends`}>
                                 See all friend
                             </Link>
                         </div>
                         <div className="text-[#65676b]">
                             {totalFriends} Friends
                         </div>
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-3 gap-4 mt-2">
                             {friends.map((friend: any, index: number) => (
                                 <div
                                     className=""
@@ -68,6 +70,10 @@ const layout = async ({
                         </div>
                     </div>
                 )}
+
+                {userId && userId === id && (
+                    <FriendshipSideBar userId={userId} />
+                )}
             </div>
             <div className="col-span-3">{children}</div>
         </div>
@@ -75,4 +81,4 @@ const layout = async ({
     return children
 }
 
-export default layout
+export default ProfileLayout

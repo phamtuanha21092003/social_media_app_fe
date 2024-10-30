@@ -2,6 +2,7 @@
 
 import { ApiProfile } from "@/apis/repositories"
 import { revalidateTag } from "next/cache"
+import ClientProfile from "@/apis/client/ClientProfile"
 
 export async function getMe() {
     const res = await ApiProfile.getMe()
@@ -44,4 +45,66 @@ export async function addFriend(targetID: number) {
     }
 
     return data?.message
+}
+
+export async function getFriendships({
+    statues = ["PENDING"],
+    perPage = 6,
+    page = 1,
+    keyword,
+}: {
+    statues?: string[]
+    perPage?: number
+    page?: number
+    keyword?: string
+}) {
+    const { data, total } = await ClientProfile.GET("/friendships", {
+        status: statues,
+        per_page: perPage,
+        page: page,
+        keyword: keyword,
+    }).then((res) => res.json())
+
+    return [data, total]
+}
+
+export async function confirmFriendship(creatorId: number) {
+    const res = ClientProfile.POST("/friendships", {
+        creator_id: creatorId,
+    }).then((res) => {
+        return res.json()
+    })
+
+    revalidateTag("/friendships")
+    revalidateTag("/friends")
+
+    return res
+}
+
+export async function deleteFriendship(creatorId: number) {
+    const res = ClientProfile.DELETE("/friendships", {
+        creator_id: creatorId,
+    }).then((res) => {
+        return res.json()
+    })
+
+    revalidateTag("/friendships")
+
+    return res
+}
+
+export async function getFriends({
+    page,
+    perPage = 10,
+    keyword,
+}: {
+    page: number
+    perPage: number
+    keyword?: string
+}) {
+    return ClientProfile.GET("/friends", {
+        page: page,
+        per_page: perPage,
+        keyword,
+    }).then((res) => res.json())
 }
