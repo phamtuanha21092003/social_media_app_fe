@@ -85,7 +85,7 @@ const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
                         <Link href="/notification">
                             <BellOutlined style={{ fontSize: "28px" }} />
                         </Link>
-                        <Link href="/notification">
+                        <Link href="/search">
                             <SearchOutlined style={{ fontSize: "28px" }} />
                         </Link>
                     </div>

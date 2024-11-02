@@ -1,7 +1,6 @@
 "use server"
 
 import { ApiProfile } from "@/apis/repositories"
-import { revalidateTag } from "next/cache"
 import ClientProfile from "@/apis/client/ClientProfile"
 
 export async function getMe() {
@@ -16,10 +15,6 @@ export async function updateMe(data: { name: string; avatar: string }) {
     const res = await ApiProfile.updateMe(data)
 
     const me = await res.json()
-
-    if (me?.message === "Updated successfully") {
-        revalidateTag("/me")
-    }
 
     return me?.message
 }
@@ -39,10 +34,6 @@ export async function addFriend(targetID: number) {
     const res = await ApiProfile.addFriend(targetID)
 
     const data = await res.json()
-
-    if (data?.message === "Add friend successfully") {
-        revalidateTag(`/friend_suggestions`)
-    }
 
     return data?.message
 }
@@ -75,8 +66,8 @@ export async function confirmFriendship(creatorId: number) {
         return res.json()
     })
 
-    revalidateTag("/friendships")
-    revalidateTag("/friends")
+    ClientProfile.REVALIDATE("/friendships")
+    ClientProfile.REVALIDATE("/friend")
 
     return res
 }
@@ -88,7 +79,7 @@ export async function deleteFriendship(creatorId: number) {
         return res.json()
     })
 
-    revalidateTag("/friendships")
+    ClientProfile.REVALIDATE("/friendships")
 
     return res
 }

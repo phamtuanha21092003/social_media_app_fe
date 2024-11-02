@@ -5,7 +5,11 @@ const getMe = () => {
 }
 
 const updateMe = (data: { name: string; avatar: string }) => {
-    return Client.PUT("/me", data)
+    const res = Client.PUT("/me", data)
+
+    Client.REVALIDATE("/me")
+
+    return res
 }
 
 const getFriendSuggestions = ({
@@ -19,7 +23,11 @@ const getFriendSuggestions = ({
 }
 
 const addFriend = (targeID: number) => {
-    return Client.POST(`/friend/${targeID}`)
+    const res = Client.POST(`/friend/${targeID}`)
+
+    Client.REVALIDATE("/friend_suggestions")
+
+    return res
 }
 
 const RepoProfile = { getMe, updateMe, getFriendSuggestions, addFriend }

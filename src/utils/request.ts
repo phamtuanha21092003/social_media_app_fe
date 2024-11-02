@@ -1,4 +1,5 @@
 import { getAccessToken } from "@/actions/auth"
+import { revalidateTag } from "next/cache"
 
 type BasicDataObject = {
     [key: string]:
@@ -23,6 +24,8 @@ interface InstanceRequest {
     PUT: (url: string, body?: object, headers?: Headers) => Promise<Response>
 
     DELETE: (url: string, body?: object, headers?: Headers) => Promise<Response>
+
+    REVALIDATE: (tag: string) => void
 }
 
 export default function getInstanceRequest(baseUrl: string): InstanceRequest {
@@ -50,7 +53,10 @@ export default function getInstanceRequest(baseUrl: string): InstanceRequest {
             }
         })
 
-        return fetch(urlInstance, { headers: headers, next: { tags: [url] } })
+        return fetch(urlInstance, {
+            headers: headers,
+            next: { tags: [baseUrl + url] },
+        })
     }
 
     async function POST(
@@ -107,5 +113,9 @@ export default function getInstanceRequest(baseUrl: string): InstanceRequest {
         })
     }
 
-    return { GET, POST, PUT, DELETE }
+    function REVALIDATE(tag: string) {
+        revalidateTag(baseUrl + tag)
+    }
+
+    return { GET, POST, PUT, DELETE, REVALIDATE: REVALIDATE }
 }

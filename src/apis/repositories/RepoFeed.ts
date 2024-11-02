@@ -5,7 +5,11 @@ const getPosts = (page: number, perPage: number, userID?: number) => {
 }
 
 const createPost = (title: string, url?: string) => {
-    return Client.POST("/posts", { url, title })
+    const res = Client.POST("/posts", { url, title })
+
+    Client.REVALIDATE("/posts")
+
+    return res
 }
 
 const getPost = (postId: number) => {
