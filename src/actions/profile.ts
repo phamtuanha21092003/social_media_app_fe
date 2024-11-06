@@ -68,6 +68,18 @@ export async function confirmFriendship(creatorId: number) {
 
     ClientProfile.REVALIDATE("/friendships")
     ClientProfile.REVALIDATE("/friend")
+    ClientProfile.REVALIDATE(`/${creatorId}`)
+
+    return res
+}
+
+export async function cancelFriendship(targetId: number) {
+    const res = ClientProfile.PUT(`/friendship/${targetId}/cancel`).then(
+        (res) => res.json()
+    )
+
+    ClientProfile.REVALIDATE("/friendships")
+    ClientProfile.REVALIDATE(`/${targetId}`)
 
     return res
 }
@@ -80,6 +92,19 @@ export async function deleteFriendship(creatorId: number) {
     })
 
     ClientProfile.REVALIDATE("/friendships")
+
+    return res
+}
+
+export async function deleteFriend(friendId: number) {
+    const res = ClientProfile.DELETE(`/friend/${friendId}/delete`).then(
+        (res) => {
+            return res.json()
+        }
+    )
+
+    ClientProfile.REVALIDATE("/friendships")
+    ClientProfile.REVALIDATE("/friends")
 
     return res
 }

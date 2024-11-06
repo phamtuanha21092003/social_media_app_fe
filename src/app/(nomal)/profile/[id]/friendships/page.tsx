@@ -2,7 +2,7 @@
 
 import React from "react"
 import { getFriendships } from "@/actions/profile"
-import { useDebounce, useEffectAfterMount, useScrollbar } from "@/hooks"
+import { useDebounce, useEffectAfterMount, useScroll } from "@/hooks"
 import { Input } from "antd"
 import { SearchOutlined } from "@ant-design/icons"
 import { Friendship } from "@/components/profiles/FriendshipSideBar"
@@ -20,8 +20,6 @@ function Friendships() {
     const [total, setTotal] = React.useState(0)
 
     async function fetchFriendships() {
-        console.log("fetch friendship")
-
         const [friendships, total] = await getFriendships({
             page,
             perPage,
@@ -34,17 +32,17 @@ function Friendships() {
 
     useEffectAfterMount(async () => {
         setFriendships([])
+        setTotal(0)
     }, [keywordDebounce])
 
     useEffectAfterMount(fetchFriendships, [page, keywordDebounce])
 
     function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
         setKeyword(e.target.value)
-        setTotal(0)
         setPage(1)
     }
 
-    useScrollbar({ total, setPage, quantity: friendships.length })
+    useScroll({ total, setPage, quantity: friendships.length })
 
     return (
         <div className="bg-white p-8 rounded-lg">

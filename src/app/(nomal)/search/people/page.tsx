@@ -1,36 +1,32 @@
 "use client"
 
 import React from "react"
+import { useSearchParams } from "next/navigation"
 import { Input } from "antd"
 import { search } from "@/actions/search"
-import Post from "@/components/feeds/Post"
-import { useScroll, useDebounce, useEffectAfterMount } from "@/hooks"
+import { useEffectAfterMount, useDebounce, useScroll } from "@/hooks"
 import Image from "next/image"
 import Link from "next/link"
 
-const Search = () => {
-    const [keyword, setKeyword] = React.useState("")
+const SearchPeople = () => {
+    const searchParams = useSearchParams()
+
+    const [keyword, setKeyword] = React.useState(searchParams.get("q") ?? "")
 
     const keywordDebounce = useDebounce(keyword)
 
-    const [page, setPage] = React.useState(1)
-
     const [users, setUsers] = React.useState<any[]>([])
+    const [totalUsers, setTotalUsers] = React.useState(0)
 
-    const [posts, setPosts] = React.useState<any[]>([])
-    const [totalPosts, setTotalPosts] = React.useState(0)
+    const [page, setPage] = React.useState(1),
+        perPage = 20
 
-    const [postId, setPostId] = React.useState(0)
-
-    function handleChangeKeyword(e: React.ChangeEvent<HTMLInputElement>) {
-        setKeyword(e.target.value)
-    }
-
-    async function fetchSearch() {
-        const { users, posts } = await search({
+    async function fetchPeople(page: number) {
+        const { users } = await search({
             page: page,
-            type: page === 1 ? "ALL" : "POST",
+            type: "PEOPLE",
             keyword: keyword,
+            perPage: perPage,
         })
 
         setUsers((perState) => [
@@ -40,29 +36,30 @@ const Search = () => {
                 isFriend: user.is_friend,
             })) || []),
         ])
+        setTotalUsers(users.total || 0)
+    }
 
-        setPosts((preState) => [...preState, ...(posts.data || [])])
-        setTotalPosts(posts.total || 0)
+    function handleChangeKeyword(e: React.ChangeEvent<HTMLInputElement>) {
+        setKeyword(e.target.value)
     }
 
     useEffectAfterMount(() => {
         setUsers([])
-
-        setPosts([])
-        setTotalPosts(0)
+        setTotalUsers(0)
+        setPage(1)
     }, [keywordDebounce])
 
-    useEffectAfterMount(fetchSearch, [page, keywordDebounce])
+    useEffectAfterMount(() => fetchPeople(page), [page, keywordDebounce])
 
-    useScroll({ total: totalPosts, setPage, quantity: users.length })
+    useScroll({ total: totalUsers, setPage, quantity: users.length })
 
     return (
         <div>
             <div className="p-4 rounded-lg bg-white flex gap-4">
                 <Input
-                    value={keyword}
                     placeholder="What are you looking for?"
                     style={{ backgroundColor: "#f3f4f6", padding: "20px" }}
+                    value={keyword}
                     onChange={handleChangeKeyword}
                 />
             </div>
@@ -93,30 +90,10 @@ const Search = () => {
                             <div className="mt-2 text-lg">{user.name}</div>
                         </Link>
                     ))}
-                    <Link
-                        href={`/search/people?q=${keyword}`}
-                        className="m-4 rounded-lg flex flex-col items-center p-2"
-                    >
-                        <div className="h-full w-full flex items-center justify-center">
-                            <button className="px-2 py-4 rounded-lg bg-[#1777ff] text-white">
-                                See more
-                            </button>
-                        </div>
-                    </Link>
                 </div>
             )}
-
-            <div className="col-span-2 flex flex-col gap-8 mt-8">
-                {posts?.map((post: any, index) => (
-                    <Post
-                        post={post}
-                        key={`post_${post.id}_index_${index}`}
-                        setPostId={setPostId}
-                    />
-                ))}
-            </div>
         </div>
     )
 }
 
-export default Search
+export default SearchPeople

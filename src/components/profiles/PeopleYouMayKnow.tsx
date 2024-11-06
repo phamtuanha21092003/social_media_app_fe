@@ -44,7 +44,7 @@ function FriendSuggestion({
 }) {
     async function handleAddFriend(userId: number) {
         const res = await addFriend(userId)
-        if (res.message === "Add friend successfully") {
+        if (res === "Add friend successfully") {
             message.success("Added friend successfully")
         }
 

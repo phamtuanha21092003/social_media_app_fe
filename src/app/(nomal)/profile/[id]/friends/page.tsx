@@ -3,7 +3,7 @@
 import React from "react"
 import { SearchOutlined } from "@ant-design/icons"
 import { Input } from "antd"
-import { useDebounce, useEffectAfterMount, useScrollbar } from "@/hooks"
+import { useDebounce, useEffectAfterMount, useScroll } from "@/hooks"
 import { getFriends } from "@/actions/profile"
 import Image from "next/image"
 import Link from "next/link"
@@ -43,7 +43,7 @@ const Friends = () => {
         setPage(1)
     }
 
-    useScrollbar({ total, setPage, quantity: friends.length })
+    useScroll({ total, setPage, quantity: friends.length })
 
     return (
         <div className="bg-white p-8 rounded-lg">

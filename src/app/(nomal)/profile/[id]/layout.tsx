@@ -5,7 +5,6 @@ import Info from "@/components/profiles/Info"
 import ClientProfile from "@/apis/client/ClientProfile"
 import Link from "next/link"
 import FriendshipSideBar from "@/components/profiles/FriendshipSideBar"
-import { getPathNameServerComponent } from "@/utils/headers"
 
 const ProfileLayout = async ({
     children,
