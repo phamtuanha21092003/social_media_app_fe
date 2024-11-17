@@ -18,8 +18,6 @@ import { initMe, selectMe } from "@/stores/me/slice"
 import { useRouter, usePathname } from "next/navigation"
 
 const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
-    const pathname = usePathname()
-
     const dispatch = useDispatch()
 
     const me = useSelector(selectMe)
@@ -79,7 +77,7 @@ const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
                         {/* <Link href="/friends">
                             <TeamOutlined style={{ fontSize: "28px" }} />
                         </Link> */}
-                        <Link href="/message">
+                        <Link href="/messages">
                             <MessageOutlined style={{ fontSize: "28px" }} />
                         </Link>
                         <Link href="/notification">
