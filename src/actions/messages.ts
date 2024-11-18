@@ -20,6 +20,7 @@ export async function getConversation(conversationId: number) {
             messages: data.messages?.map((message: any) => ({
                 ...message,
                 creatorId: message.creator_id,
+                emojiId: message.emoji_id,
             })),
             lastLogin: data.last_login,
             isActive: data.is_active,
@@ -44,6 +45,17 @@ export async function deleteMessage(messageId: number) {
     const res = await ClientMessage.DELETE(
         `/messages/${messageId}/delete`
     ).then((res) => res.json())
+
+    ClientMessage.REVALIDATE(`/messages/${messageId}`)
+    ClientMessage.REVALIDATE("/conversations")
+
+    return res
+}
+
+export async function updateEmoji(messageId: number, emojiId: number) {
+    const res = await ClientMessage.PUT(`/messages/emoji/${messageId}`, {
+        emoji_id: emojiId,
+    }).then((res) => res.json())
 
     ClientMessage.REVALIDATE(`/messages/${messageId}`)
     ClientMessage.REVALIDATE("/conversations")

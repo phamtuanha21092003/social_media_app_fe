@@ -6,6 +6,7 @@ import {
     getConversation,
     sendMessage,
     deleteMessage,
+    updateEmoji,
 } from "@/actions/messages"
 import { useEffectAfterMount } from "@/hooks"
 import { timeDeltaHumanize, formatTime } from "@/utils/time"
@@ -18,7 +19,8 @@ import {
 } from "@ant-design/icons"
 import { selectMe } from "@/stores/me/slice"
 import { useSelector } from "react-redux"
-import { message, Modal, Popover } from "antd"
+import { message, Popover } from "antd"
+import { selectEmoji, selectEmojis } from "@/stores/emoji/slice"
 
 function Messages() {
     const me = useSelector(selectMe)
@@ -71,8 +73,6 @@ function Messages() {
         }))
     }
 
-    console.log(conversation, "con")
-
     useEffectAfterMount(fetchConversation, [conversationId])
 
     function handClickConversation(_conversationId: number) {
@@ -96,7 +96,6 @@ function Messages() {
     async function handleSendMessage(content: string) {
         const res = await sendMessage(conversationId, content)
 
-        console.log(res)
         if (res.message === "success") {
             setContent("")
             fetchConversation()
@@ -121,6 +120,16 @@ function Messages() {
 
         if (res.message === "success") {
             message.success("Message deleted successfully")
+            fetchConversation()
+            fetchConversations()
+        }
+    }
+
+    async function handleUpdateEmoji(messageId: number, emojiId: number) {
+        const res = await updateEmoji(messageId, emojiId)
+
+        if (res.message === "success") {
+            message.success("Emoji updated successfully")
             fetchConversation()
             fetchConversations()
         }
@@ -203,6 +212,7 @@ function Messages() {
                             key={`message_in_${index}_mess_${message.id}`}
                             message={message}
                             handleDeleteMessage={handleDeleteMessage}
+                            handleUpdateEmoji={handleUpdateEmoji}
                             me={me}
                         />
                     ))}
@@ -235,11 +245,19 @@ function Message({
     me,
     message,
     handleDeleteMessage,
+    handleUpdateEmoji,
 }: {
     me: any
     message: any
     handleDeleteMessage: (messageId: number) => void
+    handleUpdateEmoji: (messageId: number, emojiId: number) => void
 }) {
+    const emojis = useSelector(selectEmojis)
+
+    const emoji = useSelector((state: any) =>
+        selectEmoji(state, message.emojiId)
+    )
+
     const [isMountOver, setIsMountOver] = React.useState<boolean>(false)
 
     return (
@@ -270,19 +288,50 @@ function Message({
             >
                 {isMountOver && message.status !== "DELETED" && (
                     <div className="flex items-center gap-2">
-                        {/* <Popover title="React" placement="top"> */}
-                        <FrownOutlined />
-                        {/* </Popover>
-                        <Popover title="Delete" placement="top"> */}
-                        <DeleteOutlined
-                            onClick={() => handleDeleteMessage(message.id)}
-                        />
-                        {/* </Popover> */}
+                        {message.creatorId !== me.id ? (
+                            <Popover
+                                title={null}
+                                placement="top"
+                                content={
+                                    <div className="flex gap-2 flex-wrap w-[288px] justify-center">
+                                        {emojis.map((emoji) => (
+                                            <div
+                                                key={`emoji_${emoji.id}`}
+                                                className={`cursor-pointer rounded hover:bg-[#caccd0] ${
+                                                    message.emojiId ===
+                                                        emoji.id &&
+                                                    "bg-[#caccd0]"
+                                                }`}
+                                                onClick={() =>
+                                                    handleUpdateEmoji(
+                                                        message.id,
+                                                        +emoji.id
+                                                    )
+                                                }
+                                            >
+                                                <Image
+                                                    src={emoji.url}
+                                                    alt="err"
+                                                    height={32}
+                                                    width={32}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                }
+                            >
+                                <FrownOutlined />
+                            </Popover>
+                        ) : (
+                            <DeleteOutlined
+                                onClick={() => handleDeleteMessage(message.id)}
+                            />
+                        )}
                     </div>
                 )}
-                <div className="mt-2">
+                <div className="mt-2 overflow-x-visible">
                     <div
-                        className={`py-2 px-3 rounded-2xl flex ${
+                        className={`py-2 px-3 rounded-2xl flex relative overflow-x-visible ${
                             me.id === message.creatorId
                                 ? "justify-end bg-[#3373ff] text-white "
                                 : "bg-[#f0f0f0]"
@@ -291,8 +340,30 @@ function Message({
                         }`}
                     >
                         {message.content}
+                        {emoji && (
+                            <div
+                                className="absolute bottom-0 right-0 p-[2px] bg-white translate-y-2 rounded-full cursor-pointer"
+                                onClick={() =>
+                                    handleUpdateEmoji(
+                                        message.id,
+                                        message.emojiId
+                                    )
+                                }
+                            >
+                                <Image
+                                    alt="err"
+                                    src={emoji}
+                                    height={16}
+                                    width={16}
+                                />
+                            </div>
+                        )}
                     </div>
-                    <div className="text-xs text-[#6b7280] leading-none mt-1">
+                    <div
+                        className={`text-xs text-[#6b7280] leading-none ${
+                            emoji ? "mt-2" : "mt-1"
+                        }`}
+                    >
                         {timeDeltaHumanize(message.created)}
                     </div>
                 </div>
