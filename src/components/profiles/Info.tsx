@@ -12,7 +12,9 @@ import {
     addFriend,
     deleteFriend,
 } from "@/actions/profile"
+import { getOrCreateConversation } from "@/actions/messages"
 import { UsergroupDeleteOutlined } from "@ant-design/icons"
+import { useRouter } from "next/navigation"
 
 const items: MenuProps["items"] = [
     {
@@ -28,6 +30,8 @@ const items: MenuProps["items"] = [
 
 const Info = ({ profile }: { profile: any }) => {
     const me = useSelector(selectMe)
+
+    const router = useRouter()
 
     async function handleConfirm(creatorId: number) {
         const { message: resMessage } = await confirmFriendship(creatorId)
@@ -76,6 +80,15 @@ const Info = ({ profile }: { profile: any }) => {
             setOpenDropdown(false)
         }
     }
+
+    async function handleGetOrCreateConversation(userId: number) {
+        console.log("click")
+        const { id } = await getOrCreateConversation(userId)
+        console.log(id, "id")
+
+        router.push(`/messages?c=${id}`)
+    }
+
     return (
         <div className="">
             <div className="bg-white p-4 flex flex-col items-center gap-2 rounded-lg relative">
@@ -105,7 +118,16 @@ const Info = ({ profile }: { profile: any }) => {
                                     >
                                         Cancel
                                     </Button>
-                                    <Button>Message</Button>
+                                    <Button
+                                        type="primary"
+                                        onClick={() =>
+                                            handleGetOrCreateConversation(
+                                                profile.id
+                                            )
+                                        }
+                                    >
+                                        Message
+                                    </Button>
                                 </div>
                             ) : (
                                 <div className="flex gap-4 mt-2">
@@ -117,7 +139,16 @@ const Info = ({ profile }: { profile: any }) => {
                                     >
                                         Confirm
                                     </Button>
-                                    <Button>Message</Button>
+                                    <Button
+                                        onClick={() =>
+                                            handleGetOrCreateConversation(
+                                                profile.id
+                                            )
+                                        }
+                                        type="primary"
+                                    >
+                                        Message
+                                    </Button>
                                 </div>
                             )
                         ) : profile?.is_friend ? (
@@ -138,7 +169,16 @@ const Info = ({ profile }: { profile: any }) => {
                                         Friends
                                     </Button>
                                 </Dropdown>
-                                <Button type="primary">Message</Button>
+                                <Button
+                                    type="primary"
+                                    onClick={() =>
+                                        handleGetOrCreateConversation(
+                                            profile.id
+                                        )
+                                    }
+                                >
+                                    Message
+                                </Button>
                             </div>
                         ) : (
                             <div className="flex gap-4 mt-2">
@@ -148,7 +188,16 @@ const Info = ({ profile }: { profile: any }) => {
                                 >
                                     Add friend
                                 </Button>
-                                <Button type="primary">Message</Button>
+                                <Button
+                                    type="primary"
+                                    onClick={() =>
+                                        handleGetOrCreateConversation(
+                                            profile.id
+                                        )
+                                    }
+                                >
+                                    Message
+                                </Button>
                             </div>
                         )}
                     </div>

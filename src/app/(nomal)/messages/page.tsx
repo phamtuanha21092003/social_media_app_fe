@@ -21,15 +21,22 @@ import { selectMe } from "@/stores/me/slice"
 import { useSelector } from "react-redux"
 import { message, Popover } from "antd"
 import { selectEmoji, selectEmojis } from "@/stores/emoji/slice"
+import { useSearchParams } from "next/navigation"
 
 function Messages() {
+    const searchParams = useSearchParams()
+
+    const c = searchParams.get("c")
+
     const me = useSelector(selectMe)
 
     const [conversations, setConversations] = React.useState([])
 
     const containerRef = React.useRef<HTMLDivElement>(null)
 
-    const [conversationId, setConversationId] = React.useState<number>(0)
+    const [conversationId, setConversationId] = React.useState<number>(
+        c ? +c : 0
+    )
 
     const [conversation, setConversation] = React.useState<{
         name: string
@@ -50,9 +57,11 @@ function Messages() {
     async function fetchConversations() {
         const data = await getConversations()
 
-        const conversationId = data[0].id
+        const conversationIdData = data[0].id
 
-        setConversationId(conversationId)
+        if (!conversationId) {
+            setConversationId(conversationIdData)
+        }
 
         setConversations(data)
     }
@@ -60,7 +69,7 @@ function Messages() {
     useEffectAfterMount(fetchConversations)
 
     async function fetchConversation() {
-        if (conversationId === 0) {
+        if (!conversationId) {
             return
         }
 

@@ -62,3 +62,11 @@ export async function updateEmoji(messageId: number, emojiId: number) {
 
     return res
 }
+
+export async function getOrCreateConversation(userId: number) {
+    const res = ClientMessage.POST(
+        `/conversations/${userId}/create_or_get`
+    ).then((res) => res.json())
+
+    return res
+}
