@@ -6,18 +6,19 @@ import {
     BellOutlined,
     EditOutlined,
     HomeOutlined,
+    LogoutOutlined,
     MessageOutlined,
     SearchOutlined,
-    TeamOutlined,
 } from "@ant-design/icons"
-import { Avatar, Dropdown, MenuProps } from "antd"
+import { Avatar, Dropdown, MenuProps, message } from "antd"
 import Image from "next/image"
 import { getMe } from "@/actions/profile"
 import { useDispatch, useSelector } from "react-redux"
 import { initMe, selectMe } from "@/stores/me/slice"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
+import { logout } from "@/actions/auth"
 
-const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
+const LayoutNormal: React.FC<PropsChildren> = ({ children }) => {
     const dispatch = useDispatch()
 
     const me = useSelector(selectMe)
@@ -61,7 +62,21 @@ const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
             key: "edit-profile",
             onClick: () => router.push("/edit-profile"),
         },
+        {
+            label: "Log Out",
+            icon: <LogoutOutlined />,
+            key: "logout",
+            onClick: () => handleLogout(),
+        },
     ]
+
+    async function handleLogout() {
+        await logout()
+
+        message.success("Logout success")
+
+        router.push("/")
+    }
 
     return (
         <>
@@ -80,9 +95,9 @@ const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
                         <Link href="/messages">
                             <MessageOutlined style={{ fontSize: "28px" }} />
                         </Link>
-                        <Link href="/notification">
+                        {/* <Link href="/notification">
                             <BellOutlined style={{ fontSize: "28px" }} />
-                        </Link>
+                        </Link> */}
                         <Link href="/search">
                             <SearchOutlined style={{ fontSize: "28px" }} />
                         </Link>
@@ -125,4 +140,4 @@ const LayoutAuth: React.FC<PropsChildren> = ({ children }) => {
     )
 }
 
-export default LayoutAuth
+export default LayoutNormal

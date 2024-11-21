@@ -23,9 +23,10 @@ const toEntityPost = (post: any) => ({
     url: post.url,
     commentCount: post.comment_count,
     name: post.name,
-    // TODO: remove || 0 next line
-    likeCount: post.like_count || 0,
+    likeCount: post.like_count,
     created: post.created,
+    isLiked: post.is_liked,
+    isSaved: post.is_saved,
 })
 
 const RepoFeed = { getPosts, createPost, getPost, toEntityPost }

@@ -3,6 +3,7 @@
 import React from "react"
 import { Input } from "antd"
 import { search } from "@/actions/search"
+import { likePost } from "@/actions/feed"
 import Post from "@/components/feeds/Post"
 import { useScroll, useDebounce, useEffectAfterMount } from "@/hooks"
 import Image from "next/image"
@@ -55,6 +56,22 @@ const Search = () => {
     useEffectAfterMount(fetchSearch, [page, keywordDebounce])
 
     useScroll({ total: totalPosts, setPage, quantity: users.length })
+
+    async function handleLikePost(postId: number) {
+        const { is_liked, like_count } = await likePost(postId)
+
+        const postIndex = posts.findIndex((post) => post.id === postId)
+
+        if (postIndex !== -1) {
+            setPosts((preState) =>
+                preState.with(postIndex, {
+                    ...preState[postIndex],
+                    likeCount: like_count,
+                    isLiked: is_liked,
+                })
+            )
+        }
+    }
 
     return (
         <div>
@@ -109,9 +126,11 @@ const Search = () => {
             <div className="col-span-2 flex flex-col gap-8 mt-8">
                 {posts?.map((post: any, index) => (
                     <Post
-                        post={post}
                         key={`post_${post.id}_index_${index}`}
+                        post={post}
+                        setPosts={setPosts}
                         setPostId={setPostId}
+                        likePost={handleLikePost}
                     />
                 ))}
             </div>

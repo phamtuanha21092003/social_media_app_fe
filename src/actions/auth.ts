@@ -3,6 +3,7 @@
 import { cookies } from "next/headers"
 import { ApiAuth } from "@/apis/repositories"
 import { redirect } from "next/navigation"
+import Client from "@/apis/client"
 
 export async function handleRefresh() {
     const refreshToken = await getRefreshToken()
@@ -61,6 +62,28 @@ export async function actionLogin(email: string, password: string) {
     }
 }
 
+export async function actionSignUp(
+    email: string,
+    password: string,
+    name: string
+) {
+    try {
+        const res: Response = await ApiAuth.signUp(email, password, name)
+
+        if (!res.ok) {
+            console.log("An error occurred, ")
+
+            const { error } = await res.json()
+
+            throw Error(error)
+        }
+    } catch (err) {
+        return {
+            err: err instanceof Error ? err.message : "An error occurred",
+        }
+    }
+}
+
 export async function resetAuthCookies() {
     cookies().delete("accessToken")
     cookies().delete("refreshToken")
@@ -98,4 +121,10 @@ export async function getRefreshToken() {
     let refreshToken = cookies().get("refreshToken")?.value
 
     return refreshToken
+}
+
+export async function logout() {
+    await Client.POST("/auth/logout")
+
+    resetAuthCookies()
 }

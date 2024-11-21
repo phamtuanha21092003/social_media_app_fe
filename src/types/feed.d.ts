@@ -9,6 +9,8 @@ interface Post {
     accountUserId?: int
     name?: string
     created: string
+    isLiked?: boolean
+    isSaved?: boolean
 }
 
 interface Comment {

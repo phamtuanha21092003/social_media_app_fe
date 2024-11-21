@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { getPosts } from "@/actions/feed"
+import { getPosts, likePost } from "@/actions/feed"
 import { useSelector } from "react-redux"
 import { selectMe } from "@/stores/me/slice"
 import CreatePost from "@/components/feeds/CreatePost"
@@ -42,6 +42,22 @@ const Profile = ({ params }: { params: { id: number } }) => {
 
     useScroll({ total, setPage, quantity: posts.length })
 
+    async function handleLikePost(postId: number) {
+        const { is_liked, like_count } = await likePost(postId)
+
+        const postIndex = posts.findIndex((post) => post.id === postId)
+
+        if (postIndex !== -1) {
+            setPosts((preState) =>
+                preState.with(postIndex, {
+                    ...preState[postIndex],
+                    likeCount: like_count,
+                    isLiked: is_liked,
+                })
+            )
+        }
+    }
+
     return (
         <div className="flex flex-col gap-4">
             {me.id == id && (
@@ -50,9 +66,11 @@ const Profile = ({ params }: { params: { id: number } }) => {
 
             {posts?.map((post: any, index) => (
                 <Post
-                    post={post}
                     key={`post_${post.id}_index_${index}`}
+                    post={post}
+                    setPosts={setPosts}
                     setPostId={setPostId}
+                    likePost={handleLikePost}
                 />
             ))}
         </div>

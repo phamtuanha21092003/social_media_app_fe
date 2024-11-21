@@ -1,16 +1,51 @@
 import React from "react"
-import { Avatar } from "antd"
+import { Avatar, message } from "antd"
 import Image from "next/image"
-import { CommentOutlined, HeartOutlined } from "@ant-design/icons"
+import { CommentOutlined, HeartOutlined, HeartTwoTone } from "@ant-design/icons"
 import { timeDeltaHumanize } from "@/utils/time"
+import { savePost } from "@/actions/feed"
 
 const Post = ({
     post,
     setPostId,
+    likePost,
+    setPosts,
 }: {
     post: Post
+    setPosts: React.Dispatch<React.SetStateAction<Post[]>>
     setPostId: React.Dispatch<React.SetStateAction<number>>
+    likePost: (postId: number) => void
 }) => {
+    function handleLikePost() {
+        if (likePost && post.id) likePost(post.id)
+    }
+
+    async function handSavePost(postId: number) {
+        if (postId) {
+            const { is_saved } = await savePost(postId)
+
+            if (setPosts) {
+                setPosts((posts) => {
+                    const postIndex = posts.findIndex(
+                        (post) => post.id === postId
+                    )
+
+                    return posts.with(postIndex, {
+                        ...posts[postIndex],
+                        isSaved: is_saved,
+                    })
+                })
+            }
+
+            if (is_saved) {
+                message.success("Post saved")
+                return
+            }
+
+            message.success("Post unsaved")
+        }
+    }
+
     return (
         <div className="p-4 bg-white rounded-lg flex flex-col gap-4">
             <div className="flex justify-between items-center">
@@ -33,10 +68,32 @@ const Post = ({
                     </div>
                 </div>
 
-                <div>
-                    <p className="text-[#9e9fa3]">
-                        {timeDeltaHumanize(post.created)}
-                    </p>
+                <div className="flex items-center gap-4">
+                    <div>
+                        <p className="text-[#9e9fa3]">
+                            {timeDeltaHumanize(post.created)}
+                        </p>
+                    </div>
+                    <div
+                        className="cursor-pointer"
+                        onClick={() => handSavePost(post.id ?? 0)}
+                    >
+                        {post.isSaved ? (
+                            <Image
+                                src={`/remove-tag.svg`}
+                                alt="err"
+                                height={24}
+                                width={24}
+                            />
+                        ) : (
+                            <Image
+                                src={`/save.svg`}
+                                alt="err"
+                                height={24}
+                                width={24}
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -57,8 +114,12 @@ const Post = ({
             </div>
 
             <div className="flex gap-2 items-center">
-                <div>
-                    <HeartOutlined />
+                <div className="cursor-pointer" onClick={handleLikePost}>
+                    {post?.isLiked ? (
+                        <HeartTwoTone twoToneColor={"red"} />
+                    ) : (
+                        <HeartOutlined />
+                    )}
                 </div>
                 <div>
                     <p>{post.likeCount} likes</p>
