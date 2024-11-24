@@ -4,8 +4,12 @@ const getPosts = (page: number, perPage: number, userID?: number) => {
     return Client.GET("/posts", { page, per_page: perPage, user_id: userID })
 }
 
-const createPost = (title: string, url?: string) => {
-    const res = Client.POST("/posts", { url, title })
+const createPost = (
+    title: string,
+    url?: string,
+    isPrivate: boolean = false
+) => {
+    const res = Client.POST("/posts", { url, title, is_private: isPrivate })
 
     Client.REVALIDATE("/posts")
 
@@ -27,6 +31,8 @@ const toEntityPost = (post: any) => ({
     created: post.created,
     isLiked: post.is_liked,
     isSaved: post.is_saved,
+    status: post.status,
+    userId: post.account_user_id,
 })
 
 const RepoFeed = { getPosts, createPost, getPost, toEntityPost }

@@ -11,6 +11,8 @@ interface Post {
     created: string
     isLiked?: boolean
     isSaved?: boolean
+    status?: string
+    userId?: number
 }
 
 interface Comment {

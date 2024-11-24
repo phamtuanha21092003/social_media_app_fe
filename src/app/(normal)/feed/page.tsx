@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { Children } from "react"
 import { getPost, getPosts, likePost } from "@/actions/feed"
 import { useSelector } from "react-redux"
 import Image from "next/image"
@@ -12,7 +12,8 @@ import { getFriendSuggestions } from "@/actions/profile"
 import PeopleYouMayKnow from "@/components/profiles/PeopleYouMayKnow"
 import useScroll from "@/hooks/useScroll"
 import Link from "next/link"
-import { LikeOutlined } from "@ant-design/icons"
+import { LikeOutlined, TeamOutlined } from "@ant-design/icons"
+import Avatar from "antd/es/avatar/avatar"
 
 const Feed: React.FC = () => {
     const me = useSelector(selectMe)
@@ -86,57 +87,11 @@ const Feed: React.FC = () => {
         }
     }
 
+    console.log(posts, "post")
+
     return (
         <div className="grid grid-cols-4 mt-4 gap-4">
-            <div className="">
-                <div className="bg-white p-4 flex flex-col items-center gap-2 rounded-lg relative">
-                    <div className="flex justify-center">
-                        <Image
-                            className="object-cover"
-                            src={
-                                me.avatar ||
-                                "http://localhost:9000/wey-bucket/453178253_471506465671661_2781666950760530985_n.png"
-                            }
-                            alt="avatar"
-                            height={200}
-                            width={200}
-                        />
-                    </div>
-                    <div className="mx-auto">
-                        <p>{me.name}</p>
-                    </div>
-                    <Link
-                        href={"/feed/post_liked"}
-                        className="flex justify-between items-center w-full px-10"
-                    >
-                        <div>
-                            <LikeOutlined style={{ fontSize: "28px" }} />
-                        </div>
-                        <div>Liked</div>
-                    </Link>
-                    <Link
-                        href={"/feed/post_saved"}
-                        className="flex justify-between items-center w-full px-10"
-                    >
-                        <div>
-                            <i
-                                style={{
-                                    backgroundImage:
-                                        "url('http://localhost:9000/wey-bucket/icons8-remove-tag-24.png')",
-                                    backgroundPosition: "0 -185px",
-                                    backgroundSize: "37px 592px",
-                                    width: "36px",
-                                    height: "36px",
-                                    backgroundRepeat: "no-repeat",
-                                    display: "inline-block",
-                                }}
-                            ></i>
-                        </div>
-                        <div>Saved</div>
-                    </Link>
-                </div>
-            </div>
-            <div className="col-span-2 flex flex-col gap-8">
+            <div className="col-span-3 flex flex-col gap-8">
                 <CreatePost post={post} setPost={setPost} setPosts={setPosts} />
 
                 {posts?.map((post, index) => (
@@ -150,6 +105,68 @@ const Feed: React.FC = () => {
                 ))}
             </div>
             <div>
+                <div className="bg-white py-4 flex flex-col items-center gap-2 rounded-lg relative px-10">
+                    <Link
+                        href={`/profile/${me.id}`}
+                        className="flex items-center w-full gap-4 hover:bg-slate-200 px-2 py-1 rounded-lg"
+                    >
+                        <Avatar
+                            size={{ sm: 36 }}
+                            src={
+                                <Image
+                                    className="object-cover"
+                                    src={
+                                        me.avatar ||
+                                        "http://localhost:9000/wey-bucket/453178253_471506465671661_2781666950760530985_n.png"
+                                    }
+                                    alt="avatar"
+                                    height={36}
+                                    width={36}
+                                />
+                            }
+                        />
+                        <p>{me.name}</p>
+                    </Link>
+                    <Link
+                        href={"/feed/post_liked"}
+                        className="flex items-center w-full gap-4 hover:bg-slate-200 px-2 py-1 rounded-lg"
+                    >
+                        <div>
+                            <LikeOutlined style={{ fontSize: "30px" }} />
+                        </div>
+                        <div>Liked</div>
+                    </Link>
+                    <Link
+                        href={"/feed/post_saved"}
+                        className="flex items-center w-full gap-4 hover:bg-slate-200 px-2 py-1 rounded-lg"
+                    >
+                        <div>
+                            <i
+                                style={{
+                                    backgroundImage:
+                                        "url('http://localhost:9000/wey-bucket/icons8-remove-tag-24.png')",
+                                    backgroundPosition: "0 -185px",
+                                    backgroundSize: "37px 592px",
+                                    width: "30px",
+                                    height: "30px",
+                                    backgroundRepeat: "no-repeat",
+                                    display: "inline-block",
+                                }}
+                            ></i>
+                        </div>
+                        <div>Saved</div>
+                    </Link>
+                    <Link
+                        href={`/profile/${me.id}/friends`}
+                        className="flex items-center w-full gap-4 hover:bg-slate-200 px-2 py-1 rounded-lg"
+                    >
+                        <div>
+                            <TeamOutlined style={{ fontSize: "30px" }} />
+                        </div>
+                        <div>Friend ({me.countFiend})</div>
+                    </Link>
+                </div>
+
                 <PeopleYouMayKnow />
             </div>
         </div>

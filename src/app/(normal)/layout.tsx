@@ -27,7 +27,15 @@ const LayoutNormal: React.FC<PropsChildren> = ({ children }) => {
         async function fetchMe() {
             const data = await getMe()
 
-            dispatch(initMe({ ...data, isLoading: true }))
+            console.log(data, "date, me")
+
+            dispatch(
+                initMe({
+                    ...data,
+                    isLoading: true,
+                    countFiend: data.count_friend,
+                })
+            )
         }
 
         fetchMe()

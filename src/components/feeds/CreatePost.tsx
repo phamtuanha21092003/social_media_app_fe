@@ -1,9 +1,12 @@
 import React from "react"
-import { Button, Input, message } from "antd"
+import { Button, Checkbox, Input, message } from "antd"
 import { upload } from "@/actions/common"
 import Image from "next/image"
 import { createPost } from "@/actions/feed"
 import { CloseSquareTwoTone } from "@ant-design/icons"
+import { useRouter } from "next/navigation"
+import { useSelector } from "react-redux"
+import { selectMe } from "@/stores/me/slice"
 
 const { TextArea } = Input
 
@@ -13,6 +16,12 @@ function CreatePost(props: {
     setPosts: React.Dispatch<React.SetStateAction<any>>
 }) {
     const { post, setPost, setPosts } = props
+
+    const [isPrivate, setIsPrivate] = React.useState(false)
+
+    const router = useRouter()
+
+    const me = useSelector(selectMe)
 
     const refInputFile = React.useRef<HTMLInputElement>(null)
 
@@ -36,10 +45,15 @@ function CreatePost(props: {
     }
 
     async function handlePost() {
-        const postRes = await createPost(post.title, post.url)
+        const postRes = await createPost(post.title, post.url, isPrivate)
 
         if (postRes) {
             message.success("created post successfully")
+
+            if (isPrivate) {
+                router.push(`/profile/${me.id}`)
+            }
+
             setPosts((prePosts: any) => [postRes, ...prePosts])
 
             setPost({
@@ -83,14 +97,23 @@ function CreatePost(props: {
                     }
                 />
             </div>
-            <div className="flex justify-between w-full mt-4">
-                <Button
-                    className="bg-[#566070] text-white px-4 py-2"
-                    onClick={() => refInputFile.current?.click()}
-                >
-                    Attach Image
-                </Button>
-
+            <div className="flex justify-between w-full mt-4 items-center">
+                <div className="flex items-center gap-4">
+                    <Button
+                        className="bg-[#566070] text-white px-4 py-2"
+                        onClick={() => refInputFile.current?.click()}
+                    >
+                        Attach Image
+                    </Button>
+                    <Checkbox
+                        onChange={() =>
+                            setIsPrivate((prePrivate) => !prePrivate)
+                        }
+                        checked={isPrivate}
+                    >
+                        Private
+                    </Checkbox>
+                </div>
                 <input
                     type="file"
                     hidden
@@ -98,7 +121,6 @@ function CreatePost(props: {
                     accept="image/jpeg, image/png, image/jpg, image/gif, image/jp2, image/webp"
                     onChange={handleUpload}
                 />
-
                 <Button
                     className="bg-[#9445e4] text-white px-4 py-2"
                     onClick={handlePost}

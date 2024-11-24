@@ -8,6 +8,7 @@ interface MeState {
     name: string
     avatar: string
     isLoading: boolean
+    countFiend: number
 }
 
 const initialState: MeState = {
@@ -16,6 +17,7 @@ const initialState: MeState = {
     name: "",
     avatar: "",
     isLoading: false,
+    countFiend: 0,
 }
 
 export const meSlice = createSlice({

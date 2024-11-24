@@ -19,19 +19,21 @@ const PeopleYouMayKnow: React.FC = () => {
     useEffectAfterMount(fetchFriendSuggestions)
 
     return (
-        <div className="bg-white p-4 rounded-lg">
-            <p>People you may know</p>
+        friendSuggestions.length > 0 && (
+            <div className="bg-white p-4 rounded-lg mt-4">
+                <p>People you may know</p>
 
-            <div className="flex flex-col gap-2">
-                {friendSuggestions?.map((suggestion, index) => (
-                    <FriendSuggestion
-                        key={`${suggestion.id}_id_index${index}`}
-                        suggestion={suggestion}
-                        fetchFriendSuggestions={fetchFriendSuggestions}
-                    />
-                ))}
+                <div className="flex flex-col gap-2">
+                    {friendSuggestions?.map((suggestion, index) => (
+                        <FriendSuggestion
+                            key={`${suggestion.id}_id_index${index}`}
+                            suggestion={suggestion}
+                            fetchFriendSuggestions={fetchFriendSuggestions}
+                        />
+                    ))}
+                </div>
             </div>
-        </div>
+        )
     )
 }
 

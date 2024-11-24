@@ -11,8 +11,12 @@ export async function getPosts(page: number, perPage: number, userID?: number) {
     return [posts?.data?.map(ApiFeed.toEntityPost), posts.total]
 }
 
-export async function createPost(title: string, url?: string) {
-    const res = await ApiFeed.createPost(title, url)
+export async function createPost(
+    title: string,
+    url?: string,
+    isPrivate: boolean = false
+) {
+    const res = await ApiFeed.createPost(title, url, isPrivate)
 
     const data = await res.json()
 
@@ -77,4 +81,27 @@ export async function getPostsSaved({
     }).then((res) => res.json())
 
     return [data?.map(ApiFeed.toEntityPost), total]
+}
+
+export async function updatePost({
+    postId,
+    title,
+    url,
+    status,
+}: {
+    postId: number
+    title?: string
+    url?: string
+    status?: string
+}) {
+    const data = await ClientFeed.PUT(`/post/${postId}`, {
+        title,
+        url,
+        status,
+    }).then((res) => res.json())
+
+    ClientFeed.REVALIDATE("/posts")
+    ClientFeed.REVALIDATE(`/post/${postId}`)
+
+    return data
 }
