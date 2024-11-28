@@ -4,7 +4,7 @@ interface Post {
     url: string
     commentCount: number
     likeCount: number
-    comments?: { [key: number | null]: Comment[] }
+    comments?: { [key: number | null | string]: Comment[] }
     avatar?: string
     accountUserId?: int
     name?: string
@@ -21,5 +21,8 @@ interface Comment {
     title: string
     replyCount: number
     created: string
-    accountUserId?: int
+    userId: int
+    avatar: string
+    created: string
+    name: string
 }

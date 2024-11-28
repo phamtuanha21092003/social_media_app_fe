@@ -5,15 +5,15 @@ import { useDispatch } from "react-redux"
 import { initEmoji } from "@/stores/emoji/slice"
 
 function Emojis({
-    emoji,
+    emojis,
     children,
 }: {
-    emoji: { [key: string]: string }
+    emojis: { [key: string]: string }
     children: React.ReactNode
 }) {
     const dispatch = useDispatch()
 
-    dispatch(initEmoji(emoji))
+    dispatch(initEmoji(emojis))
 
     return children
 }

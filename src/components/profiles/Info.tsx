@@ -82,9 +82,7 @@ const Info = ({ profile }: { profile: any }) => {
     }
 
     async function handleGetOrCreateConversation(userId: number) {
-        console.log("click")
         const { id } = await getOrCreateConversation(userId)
-        console.log(id, "id")
 
         router.push(`/messages?c=${id}`)
     }

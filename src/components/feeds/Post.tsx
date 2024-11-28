@@ -1,3 +1,5 @@
+"use client"
+
 import React from "react"
 import { Avatar, Button, MenuProps, message, Input } from "antd"
 import Image from "next/image"
@@ -8,24 +10,30 @@ import {
     HeartTwoTone,
 } from "@ant-design/icons"
 import { timeDeltaHumanize } from "@/utils/time"
-import { savePost, updatePost } from "@/actions/feed"
+import {
+    savePost,
+    updatePost,
+    likePost as likePostAction,
+} from "@/actions/feed"
 import { upload } from "@/actions/common"
 import { useSelector } from "react-redux"
 import { selectMe } from "@/stores/me/slice"
 import { Dropdown } from "antd"
+import Link from "next/link"
 
 const { TextArea } = Input
 
 const Post = ({
     post,
-    setPostId,
-    likePost,
+    likePost = async (postId: number) => {
+        await likePostAction(postId)
+    },
     setPosts,
 }: {
     post: Post
-    setPosts: React.Dispatch<React.SetStateAction<Post[]>>
-    setPostId: React.Dispatch<React.SetStateAction<number>>
-    likePost: (postId: number) => void
+    setPosts?: React.Dispatch<React.SetStateAction<Post[]>>
+    setPostId?: React.Dispatch<React.SetStateAction<number>>
+    likePost?: (postId: number) => void
 }) => {
     const me = useSelector(selectMe)
 
@@ -77,13 +85,14 @@ const Post = ({
             if (resMessage === "success") {
                 message.success("Post deleted")
 
-                setPosts((posts) => {
-                    const postIndex = posts.findIndex(
-                        (post) => post.id === postId
-                    )
+                if (setPosts)
+                    setPosts((posts) => {
+                        const postIndex = posts.findIndex(
+                            (post) => post.id === postId
+                        )
 
-                    return posts.toSpliced(postIndex, 1)
-                })
+                        return posts.toSpliced(postIndex, 1)
+                    })
 
                 return
             }
@@ -104,16 +113,17 @@ const Post = ({
             if (resMessage === "success") {
                 message.success("Change status successfully")
 
-                setPosts((posts) => {
-                    const postIndex = posts.findIndex(
-                        (post) => post.id === postId
-                    )
+                if (setPosts)
+                    setPosts((posts) => {
+                        const postIndex = posts.findIndex(
+                            (post) => post.id === postId
+                        )
 
-                    return posts.with(postIndex, {
-                        ...posts[postIndex],
-                        status: resStatus,
+                        return posts.with(postIndex, {
+                            ...posts[postIndex],
+                            status: resStatus,
+                        })
                     })
-                })
 
                 return
             }
@@ -149,13 +159,14 @@ const Post = ({
             if (resMessage === "success") {
                 message.success("Update post successfully")
 
-                setPosts((posts) => {
-                    const postIndex = posts.findIndex(
-                        (post) => post.id === post.id
-                    )
+                if (setPosts)
+                    setPosts((posts) => {
+                        const postIndex = posts.findIndex(
+                            (post) => post.id === post.id
+                        )
 
-                    return posts.with(postIndex, { ...postEditing })
-                })
+                        return posts.with(postIndex, { ...postEditing })
+                    })
 
                 setIsEditing(false)
 
@@ -313,16 +324,12 @@ const Post = ({
                 <div>
                     <p>{post.likeCount} likes</p>
                 </div>
-                <div className="ml-4">
-                    <CommentOutlined
-                        onClick={() => {
-                            if (post.id) {
-                                setPostId(post.id)
-                            }
-                        }}
-                    />
-                </div>
-                <div>{post.commentCount} comments</div>
+                <Link href={`/feed/${post.id}`} className="ml-4">
+                    <CommentOutlined />
+                </Link>
+                <Link href={`/feed/${post.id}`}>
+                    {post.commentCount} comments
+                </Link>
                 {post.status === "PRIVATE" && (
                     <>
                         <div className="ml-4">

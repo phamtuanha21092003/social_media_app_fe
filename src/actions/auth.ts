@@ -71,8 +71,6 @@ export async function actionSignUp(
         const res: Response = await ApiAuth.signUp(email, password, name)
 
         if (!res.ok) {
-            console.log("An error occurred, ")
-
             const { error } = await res.json()
 
             throw Error(error)

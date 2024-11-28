@@ -20,20 +20,50 @@ const getPost = (postId: number) => {
     return Client.GET(`/post/${postId}`)
 }
 
-const toEntityPost = (post: any) => ({
-    id: post.id,
-    title: post.title,
-    avatar: post.avatar,
-    url: post.url,
-    commentCount: post.comment_count,
-    name: post.name,
-    likeCount: post.like_count,
-    created: post.created,
-    isLiked: post.is_liked,
-    isSaved: post.is_saved,
-    status: post.status,
-    userId: post.account_user_id,
-})
+const toEntityComment = (comment: any) => {
+    return {
+        id: comment.id,
+        title: comment.title,
+        replyCount: comment.reply_count,
+        created: comment.created,
+        avatar: comment.avatar,
+        name: comment.name,
+        userId: comment.account_user_id,
+    }
+}
+
+const toEntityPost = (post: any) => {
+    const result = {
+        id: post.id,
+        title: post.title,
+        avatar: post.avatar,
+        url: post.url,
+        commentCount: post.comment_count,
+        name: post.name,
+        likeCount: post.like_count,
+        created: post.created,
+        isLiked: post.is_liked,
+        isSaved: post.is_saved,
+        status: post.status,
+        userId: post.account_user_id,
+    } as Post
+
+    if (post.comments) {
+        const comments = post.comments
+
+        const keyCommentReplies = post.key_comments
+
+        keyCommentReplies.forEach((key: any) => {
+            const commentReplies = post.comments[key]
+
+            comments[key] = commentReplies?.map(toEntityComment)
+        })
+
+        result.comments = comments
+    }
+
+    return result
+}
 
 const RepoFeed = { getPosts, createPost, getPost, toEntityPost }
 

@@ -87,8 +87,6 @@ const Feed: React.FC = () => {
         }
     }
 
-    console.log(posts, "post")
-
     return (
         <div className="grid grid-cols-4 mt-4 gap-4">
             <div className="col-span-3 flex flex-col gap-8">

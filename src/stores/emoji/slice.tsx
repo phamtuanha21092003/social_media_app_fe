@@ -8,7 +8,7 @@ interface EmojiState {
 
 const initialState: EmojiState = {}
 
-export const meSlice = createSlice({
+export const emojiSlice = createSlice({
     name: "emoji",
     initialState,
     reducers: {
@@ -18,11 +18,11 @@ export const meSlice = createSlice({
     },
 })
 
-export const { initEmoji } = meSlice.actions
+export const { initEmoji } = emojiSlice.actions
 
 export const selectEmoji = (state: RootState, key: string) => state.emoji[key]
 
 export const selectEmojis = (state: EmojiState) =>
     Object.entries(state.emoji).map(([key, value]) => ({ id: key, url: value }))
 
-export default meSlice.reducer
+export default emojiSlice.reducer

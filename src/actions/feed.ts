@@ -105,3 +105,57 @@ export async function updatePost({
 
     return data
 }
+
+export async function addComment({
+    postId,
+    title,
+    replyId,
+}: {
+    postId: number
+    title: string
+    replyId?: number
+}) {
+    const data = await ClientFeed.POST(`/comments/${postId}`, {
+        title,
+        reply_id: replyId,
+    }).then((res) => res.json())
+
+    ClientFeed.REVALIDATE(`/post/${postId}`)
+
+    return data
+}
+
+export async function editComment({
+    postId,
+    title,
+    commentId,
+}: {
+    postId: number
+    title: string
+    commentId: number
+}) {
+    const data = await ClientFeed.PUT(`/comments/${postId}`, {
+        title,
+        id: commentId,
+    }).then((res) => res.json())
+
+    ClientFeed.REVALIDATE(`/post/${postId}`)
+
+    return data
+}
+
+export async function deleteComment({
+    postId,
+    commentId,
+}: {
+    postId: number
+    commentId: number
+}) {
+    const data = await ClientFeed.DELETE(`/comments/${postId}`, {
+        id: commentId,
+    }).then((res) => res.json())
+
+    ClientFeed.REVALIDATE(`/post/${postId}`)
+
+    return data
+}
