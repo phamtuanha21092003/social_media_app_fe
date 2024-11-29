@@ -29,6 +29,8 @@ const toEntityComment = (comment: any) => {
         avatar: comment.avatar,
         name: comment.name,
         userId: comment.account_user_id,
+        emojiId: comment.emoji_id,
+        emojis: comment.emojis,
     }
 }
 

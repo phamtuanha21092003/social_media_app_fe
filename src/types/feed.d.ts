@@ -25,4 +25,12 @@ interface Comment {
     avatar: string
     created: string
     name: string
+    emojiId: number | null
+    emojis: EmojiPost[]
+}
+
+interface EmojiPost {
+    id: number
+    url: string
+    count: number
 }

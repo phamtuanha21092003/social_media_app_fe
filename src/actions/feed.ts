@@ -159,3 +159,38 @@ export async function deleteComment({
 
     return data
 }
+
+export async function updateEmojiComment({
+    commentId,
+    postId,
+    emojiId,
+}: {
+    commentId: number
+    postId: number
+    emojiId: number
+}) {
+    const data = await ClientFeed.PUT(`/comments/emoji/${commentId}`, {
+        post_id: postId,
+        emoji_id: emojiId,
+    }).then((res) => res.json())
+
+    ClientFeed.REVALIDATE(`/post/${postId}`)
+
+    return data
+}
+
+export async function deleteEmojiComment({
+    commentId,
+    postId,
+}: {
+    commentId: number
+    postId: number
+}) {
+    const data = await ClientFeed.DELETE(`/comments/emoji/${commentId}`, {
+        post_id: postId,
+    }).then((res) => res.json())
+
+    ClientFeed.REVALIDATE(`/post/${postId}`)
+
+    return data
+}
