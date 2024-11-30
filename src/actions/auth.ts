@@ -126,3 +126,23 @@ export async function logout() {
 
     resetAuthCookies()
 }
+
+export async function changePassword({
+    oldPassword,
+    newPassword,
+    confirmPassword,
+}: {
+    oldPassword: string
+    newPassword: string
+    confirmPassword: string
+}) {
+    const res = await Client.POST("/auth/change_password", {
+        old_password: oldPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+    })
+
+    const { message } = await res.json()
+
+    return message
+}

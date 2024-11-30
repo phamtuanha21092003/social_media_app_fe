@@ -7,6 +7,7 @@ import { Input, Button, InputRef, message } from "antd"
 import Image from "next/image"
 import { upload } from "@/actions/common"
 import { updateMe } from "@/actions/profile"
+import Link from "next/link"
 
 const EditProfile: React.FC = () => {
     const me = useSelector(selectMe)
@@ -75,9 +76,13 @@ const EditProfile: React.FC = () => {
         <div className="grid grid-cols-2 mt-4 gap-8">
             <div>
                 <div className="bg-white flex flex-col gap-4 p-6 rounded-lg">
-                    <p>Edit profile</p>
-                    <p></p>
-                    <p></p>
+                    <p className="text-lg font-bold">Edit profile</p>
+                    <Link
+                        href={"/edit-password"}
+                        className="text-base underline"
+                    >
+                        Edit password
+                    </Link>
                 </div>
             </div>
             <div className="bg-white rounded-lg p-8 text-lg font-medium flex flex-col gap-4">
