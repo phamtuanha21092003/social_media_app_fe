@@ -38,6 +38,8 @@ const Comment = ({ comment, postId }: { comment: Comment; postId: number }) => {
 
     const [title, setTitle] = React.useState("")
 
+    const [isHiddenReply, setIsHiddenReply] = React.useState(false)
+
     async function handleAddComment() {
         await addComment({ postId, title, replyId: comment.id })
 
@@ -270,9 +272,23 @@ const Comment = ({ comment, postId }: { comment: Comment; postId: number }) => {
                     </div>
                 )}
 
-                {comment.replyCount > 0 && (
+                {comment.replyCount > 0 && isHiddenReply ? (
+                    <a
+                        onClick={(e) => {
+                            e.preventDefault()
+
+                            setIsHiddenReply(false)
+                        }}
+                        className="underline text-[#65686c] cursor-pointer"
+                    >
+                        See all comment
+                    </a>
+                ) : (
                     <div className="flex mt-1">
-                        <button className="border-none outline-none w-[15px] -translate-x-1/2 p-0 bg-[#9ca1de]"></button>
+                        <button
+                            className="border-none outline-none w-[15px] -translate-x-1/2 p-0 bg-[#9ca1de]"
+                            onClick={() => setIsHiddenReply(true)}
+                        ></button>
                         <div className="flex-1 pl-4">
                             <Comments
                                 postId={postId}

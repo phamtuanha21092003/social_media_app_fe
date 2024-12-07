@@ -20,7 +20,7 @@ const WriteComment = ({ postId }: { postId: number }) => {
     }
 
     return (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
             <Avatar
                 src={
                     <Image
@@ -36,7 +36,7 @@ const WriteComment = ({ postId }: { postId: number }) => {
             />
             <input
                 placeholder="Write a comment"
-                className="rounded-3xl bg-[#f3f3f3] pr-[35px] pl-4 border-none text-[#000] text-[14px] cursor-pointer outline-none w-full h-10 max-w-[1240px]"
+                className="rounded-3xl bg-[#f3f3f3] pr-[35px] pl-4 border-none text-[#000] text-[14px] cursor-pointer outline-none w-full h-10 flex-1"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
             />

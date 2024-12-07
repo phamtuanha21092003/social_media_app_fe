@@ -139,7 +139,7 @@ const LayoutNormal: React.FC<PropsChildren> = ({ children }) => {
                 {/* {pathname.includes("/friends") ? (
                     <div className="w-full">{children}</div>
                 ) : ( */}
-                <div className="max-w-[1400px] w-full">{children}</div>
+                <div className="max-w-[1600px] w-full">{children}</div>
                 {/* )} */}
             </main>
         </>

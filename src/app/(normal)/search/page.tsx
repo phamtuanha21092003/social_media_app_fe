@@ -74,7 +74,7 @@ const Search = () => {
     }
 
     return (
-        <div>
+        <div className="mt-8">
             <div className="p-4 rounded-lg bg-white flex gap-4">
                 <Input
                     value={keyword}
